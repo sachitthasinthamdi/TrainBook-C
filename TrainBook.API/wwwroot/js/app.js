@@ -31,6 +31,16 @@ function refreshNav() {
   const link = document.getElementById('authLink');
   if (!link) return;
   const u = getUser();
+  // ลิงก์แอดมิน (แสดงเฉพาะ role admin)
+  const ul = link.closest('ul');
+  let adminLi = document.getElementById('adminNav');
+  if (u && u.role === 'admin' && ul && !adminLi) {
+    adminLi = document.createElement('li'); adminLi.id = 'adminNav';
+    adminLi.innerHTML = '<a href="admin.html" style="color:#ff9800;font-weight:700;">🛠 แอดมิน</a>';
+    ul.insertBefore(adminLi, link.parentElement);
+  } else if ((!u || u.role !== 'admin') && adminLi) {
+    adminLi.remove();
+  }
   if (u) {
     link.textContent = 'ออกจากระบบ (' + u.username + ')';
     link.onclick = (e) => { e.preventDefault(); setAuth(null, null); location.href = 'index.html'; };
@@ -240,7 +250,7 @@ function initLogin() {
     let d;
     try { d = await api('/api/auth/login', { method: 'POST', body: { username, password } }); }
     catch (err) { toast(err.message); return; }
-    setAuth(d.token, { userId: d.userId, username: d.username, email: d.email });
+    setAuth(d.token, { userId: d.userId, username: d.username, email: d.email, role: d.role });
     toast('เข้าสู่ระบบสำเร็จ');
     setTimeout(() => location.href = 'index.html', 600);
   });

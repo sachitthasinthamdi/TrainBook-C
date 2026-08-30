@@ -53,6 +53,7 @@ namespace TrainBook.API.Services
                 UserId = user.UserId,
                 Username = user.Username,
                 Email = user.Email,
+                Role = user.Role,
                 Token = token
             };
         }
@@ -72,6 +73,7 @@ namespace TrainBook.API.Services
                 UserId = user.UserId,
                 Username = user.Username,
                 Email = user.Email,
+                Role = user.Role,
                 Token = token
             };
         }
