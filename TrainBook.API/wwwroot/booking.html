@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ข้อมูลผู้โดยสารและชำระเงิน - TrainBook</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="booking">
+<nav class="navbar"><div class="container">
+  <a class="logo" href="index.html">🚆 TrainBook</a>
+  <ul class="nav-links">
+    <li><a href="index.html">หน้าแรก</a></li>
+    <li><a href="history.html">ประวัติการจอง</a></li>
+    <li><a href="#" id="authLink" class="btn-nav">เข้าสู่ระบบ</a></li>
+  </ul>
+</div></nav>
+
+<div class="container page-wrap" style="max-width:820px;">
+  <h2 class="page-title">ข้อมูลผู้โดยสารและชำระเงิน</h2>
+  <div class="card" style="background:#eaf3fd;border-color:#cfe0f5;font-size:14px;" id="tripInfo"></div>
+
+  <div class="card">
+    <h3 style="font-family:'Kanit';margin-bottom:14px;">ข้อมูลผู้โดยสาร</h3>
+    <div id="passengerForms"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="font-family:'Kanit';margin-bottom:14px;">วิธีชำระเงิน</h3>
+    <div class="pay-option sel" data-method="บัตรเครดิต/เดบิต">💳 <div><b>บัตรเครดิต / เดบิต</b><div style="font-size:12px;color:var(--ink-soft);">Visa, Mastercard, JCB</div></div></div>
+    <div class="pay-option" data-method="Mobile Banking">🏦 <div><b>Mobile Banking</b><div style="font-size:12px;color:var(--ink-soft);">ธนาคารชั้นนำ</div></div></div>
+    <div class="pay-option" data-method="QR PromptPay">🔳 <div><b>QR Code PromptPay</b><div style="font-size:12px;color:var(--ink-soft);">สแกนจ่าย</div></div></div>
+  </div>
+
+  <div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+    <div><span style="color:var(--ink-soft);">ยอดชำระทั้งหมด</span><div style="font-size:24px;font-weight:700;color:var(--primary);" id="total">0 บาท</div></div>
+    <button class="btn-primary" id="confirmBtn">💳 ยืนยันและชำระเงิน</button>
+  </div>
+</div>
+
+<footer>© 2024-2026 TrainBook</footer>
+<script src="js/app.js"></script>
+</body>
+</html>

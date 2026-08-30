@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เข้าสู่ระบบ - TrainBook</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page" data-page="login">
+  <div class="auth-container">
+    <div class="auth-left">
+      <h1>ยินดีต้อนรับ<br>กลับเข้าสู่ระบบ</h1>
+      <p>เข้าสู่ระบบเพื่อจองตั๋วรถไฟออนไลน์ของคุณ</p>
+      <div class="auth-feature"><span>🎫</span><div><h4>จองตั๋วได้ง่ายและรวดเร็ว</h4><p>เพียงไม่กี่ขั้นตอน</p></div></div>
+      <div class="auth-feature"><span>🕘</span><div><h4>ตรวจสอบการเดินทาง</h4><p>เช็กประวัติได้ตลอดเวลา</p></div></div>
+      <div class="auth-feature"><span>🎁</span><div><h4>สิทธิพิเศษสำหรับสมาชิก</h4><p>โปรโมชั่นมากมาย</p></div></div>
+    </div>
+    <div class="auth-form-container">
+      <a href="index.html" class="back-link">← กลับหน้าหลัก</a>
+      <h2>เข้าสู่ระบบ</h2>
+      <p>กรอกชื่อผู้ใช้และรหัสผ่าน</p>
+      <form id="loginForm">
+        <div class="form-group"><label>ชื่อผู้ใช้ (Username)</label><input id="loginUsername" placeholder="กรอกชื่อผู้ใช้" required></div>
+        <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="loginPassword" placeholder="กรอกรหัสผ่าน" required></div>
+        <button type="submit" class="btn-primary btn-full" style="margin-top:8px;">เข้าสู่ระบบ</button>
+      </form>
+      <p class="auth-footer">ยังไม่มีบัญชี? <a href="register.html">สมัครสมาชิก</a></p>
+      <p class="auth-footer" style="font-size:12.5px;">ทดลอง: user / user123 &nbsp;·&nbsp; admin / admin123</p>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

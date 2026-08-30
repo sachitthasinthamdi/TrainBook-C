@@ -1,0 +1,14 @@
+# .NET build output
+bin/
+obj/
+*.user
+.vs/
+
+# SQLite database (สร้างเองตอนรัน)
+*.db
+*.db-shm
+*.db-wal
+
+# ไฟล์ที่ระบบสร้าง (QR / e-ticket)
+TrainBook.API/wwwroot/qrcodes/
+TrainBook.API/wwwroot/tickets/

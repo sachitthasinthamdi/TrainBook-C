@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สมัครสมาชิก - TrainBook</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page" data-page="register">
+  <div class="auth-container">
+    <div class="auth-left">
+      <h1>สมัครสมาชิก<br>สร้างบัญชีของคุณ</h1>
+      <p>สมัครเพื่อจองตั๋วรถไฟออนไลน์ สะดวก รวดเร็ว ปลอดภัย</p>
+      <div class="auth-feature"><span>🎫</span><div><h4>จองตั๋วได้ทุกที่</h4><p>ทุกที่ ทุกเวลา</p></div></div>
+      <div class="auth-feature"><span>💺</span><div><h4>เลือกที่นั่งได้ง่าย</h4><p>แบบเรียลไทม์</p></div></div>
+      <div class="auth-feature"><span>🔔</span><div><h4>แจ้งเตือนทันที</h4><p>สถานะการจอง</p></div></div>
+    </div>
+    <div class="auth-form-container">
+      <a href="index.html" class="back-link">← กลับหน้าหลัก</a>
+      <h2>สมัครสมาชิก</h2>
+      <p>กรอกข้อมูลเพื่อสร้างบัญชีใหม่</p>
+      <form id="registerForm">
+        <div class="form-row-2">
+          <div class="form-group"><label>ชื่อ</label><input id="firstName" placeholder="ชื่อ" required></div>
+          <div class="form-group"><label>นามสกุล</label><input id="lastName" placeholder="นามสกุล" required></div>
+        </div>
+        <div class="form-group"><label>ชื่อผู้ใช้</label><input id="username" placeholder="กรอกชื่อผู้ใช้" required></div>
+        <div class="form-group"><label>อีเมล</label><input type="email" id="email" placeholder="กรอกอีเมล" required></div>
+        <div class="form-group"><label>เบอร์โทรศัพท์</label><input id="phone" placeholder="กรอกเบอร์โทรศัพท์"></div>
+        <div class="form-row-2">
+          <div class="form-group"><label>รหัสผ่าน</label><input type="password" id="password" placeholder="อย่างน้อย 6 ตัว" required minlength="6"></div>
+          <div class="form-group"><label>ยืนยันรหัสผ่าน</label><input type="password" id="confirmPassword" placeholder="ยืนยันรหัสผ่าน" required></div>
+        </div>
+        <div class="form-checkbox"><input type="checkbox" id="agreeTerms" required><label for="agreeTerms">ฉันยอมรับข้อกำหนดและเงื่อนไข</label></div>
+        <button type="submit" class="btn-primary btn-full">สมัครสมาชิก</button>
+      </form>
+      <p class="auth-footer">มีบัญชีอยู่แล้ว? <a href="login.html">เข้าสู่ระบบ</a></p>
+    </div>
+  </div>
+  <script src="js/app.js"></script>
+</body>
+</html>

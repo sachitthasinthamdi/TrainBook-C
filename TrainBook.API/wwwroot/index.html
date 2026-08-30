@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrainBook - ระบบจองตั๋วรถไฟออนไลน์</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Kanit:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="index">
+<nav class="navbar">
+  <div class="container">
+    <a class="logo" href="index.html">🚆 TrainBook</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="active">หน้าแรก</a></li>
+      <li><a href="history.html">ประวัติการจอง</a></li>
+      <li><a href="#" id="authLink" class="btn-nav">เข้าสู่ระบบ</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <h1>เดินทางง่าย จองตั๋วรถไฟ สะดวก รวดเร็ว ปลอดภัย</h1>
+      <p>จองตั๋วรถไฟออนไลน์ได้ทุกที่ ทุกเวลา</p>
+      <div class="search-box">
+        <div class="search-tabs">
+          <button type="button" class="tab-btn active">เที่ยวเดียว</button>
+          <button type="button" class="tab-btn">ไป-กลับ</button>
+        </div>
+        <form id="searchForm">
+          <div class="form-row">
+            <div class="form-group"><label>ต้นทาง</label><select id="origin" required></select></div>
+            <div class="form-group"><label>ปลายทาง</label><select id="destination" required></select></div>
+            <div class="form-group"><label>วันที่เดินทาง</label><input type="date" id="travelDate" value="2024-05-27" required></div>
+            <div class="form-group"><label>ผู้โดยสาร</label>
+              <select id="passengers"><option value="1">1 คน</option><option value="2">2 คน</option><option value="3">3 คน</option><option value="4">4 คน</option></select>
+            </div>
+          </div>
+          <button type="submit" class="btn-search">🔍 ค้นหารถไฟ</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="features">
+    <div class="feature-card"><div class="feature-icon">🚄</div><h3>จองตั๋วได้ทุกที่</h3><p>ออนไลน์ตลอด 24 ชั่วโมง</p></div>
+    <div class="feature-card"><div class="feature-icon">💺</div><h3>เลือกที่นั่งได้เอง</h3><p>เลือกชั้นโดยสารที่ต้องการ</p></div>
+    <div class="feature-card"><div class="feature-icon">📱</div><h3>E-Ticket + QR</h3><p>รับตั๋วทันทีหลังชำระเงิน</p></div>
+    <div class="feature-card"><div class="feature-icon">🛡️</div><h3>ปลอดภัย</h3><p>ระบบยืนยันตัวตนด้วย JWT</p></div>
+  </div>
+</div>
+
+<footer>© 2024-2026 TrainBook — ระบบจองตั๋วรถไฟออนไลน์</footer>
+<script src="js/app.js"></script>
+</body>
+</html>
