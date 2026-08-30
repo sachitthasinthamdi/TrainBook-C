@@ -46,12 +46,13 @@ namespace TrainBook.API.Data
             var from = new DateTime(2020, 1, 1);
             var to = new DateTime(2030, 12, 31);
 
-            // ---- ตารางเดินรถ (กรุงเทพฯ → เชียงใหม่) + ราคา ----
-            void AddSchedule(Train train, string dep, string arr, int mins, (TicketClass cls, decimal price, int seats)[] prices)
+            // ---- ตารางเดินรถ + ราคา ----
+            void AddSchedule(Train train, Station origin, Station dest, string dep, string arr, int mins,
+                             (TicketClass cls, decimal price, int seats)[] prices)
             {
                 var s = new Schedule
                 {
-                    Train = train, OriginStation = bkk, DestinationStation = cnx,
+                    Train = train, OriginStation = origin, DestinationStation = dest,
                     DepartureTime = TimeSpan.Parse(dep), ArrivalTime = TimeSpan.Parse(arr),
                     DurationMinutes = mins, IsActive = true
                 };
@@ -63,10 +64,21 @@ namespace TrainBook.API.Data
                 db.SaveChanges();
             }
 
-            AddSchedule(t9,  "18:10", "07:15", 785, new[] { (c1, 1250m, 16), (c2s, 850m, 42), (c2, 250m, 60) });
-            AddSchedule(t13, "20:05", "08:40", 755, new[] { (c1, 1150m, 10), (c2s, 750m, 38), (c2, 750m, 55) });
-            AddSchedule(t51, "07:30", "19:40", 730, new[] { (c3, 600m, 80) });
-            AddSchedule(t67, "15:40", "03:50", 730, new[] { (c3, 600m, 80) });
+            // กรุงเทพฯ → เชียงใหม่
+            AddSchedule(t9,  bkk, cnx, "18:10", "07:15", 785, new[] { (c1, 1250m, 16), (c2s, 850m, 42), (c2, 250m, 60) });
+            AddSchedule(t13, bkk, cnx, "20:05", "08:40", 755, new[] { (c1, 1150m, 10), (c2s, 750m, 38), (c2, 750m, 55) });
+            AddSchedule(t51, bkk, cnx, "07:30", "19:40", 730, new[] { (c3, 600m, 80) });
+            AddSchedule(t67, bkk, cnx, "15:40", "03:50", 730, new[] { (c3, 600m, 80) });
+
+            // เชียงใหม่ → กรุงเทพฯ (เที่ยวกลับ)
+            AddSchedule(t9,  cnx, bkk, "17:00", "06:05", 785, new[] { (c1, 1250m, 16), (c2s, 850m, 42), (c2, 250m, 60) });
+            AddSchedule(t13, cnx, bkk, "18:00", "06:40", 760, new[] { (c1, 1150m, 10), (c2s, 750m, 38), (c2, 750m, 55) });
+
+            // กรุงเทพฯ → พิษณุโลก
+            AddSchedule(t51, bkk, plk, "07:30", "13:15", 345, new[] { (c2, 350m, 60), (c3, 300m, 80) });
+
+            // กรุงเทพฯ → ขอนแก่น
+            AddSchedule(t67, bkk, kkc, "20:30", "06:00", 570, new[] { (c2s, 550m, 40), (c3, 350m, 80) });
         }
 
         // SHA256 → Base64 (ให้ตรงกับ AuthService.HashPassword)

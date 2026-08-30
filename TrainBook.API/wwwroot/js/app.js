@@ -57,7 +57,11 @@ async function initIndex() {
       o.add(new Option(s.stationName, s.stationId));
       d.add(new Option(s.stationName, s.stationId));
     });
-    if (d.options.length > 1) d.selectedIndex = 1;
+    // ตั้งค่าเริ่มต้น: ต้นทาง = กรุงเทพฯ, ปลายทาง = เชียงใหม่ (เส้นทางที่มีเที่ยวรถ)
+    const bkk = [...o.options].find(op => op.text.includes('กรุงเทพ'));
+    const cnx = [...d.options].find(op => op.text.includes('เชียงใหม่'));
+    if (bkk) o.value = bkk.value;
+    if (cnx) d.value = cnx.value;
   } catch (e) { toast(e.message); }
 
   document.getElementById('searchForm').addEventListener('submit', (e) => {
