@@ -30,6 +30,24 @@ namespace TrainBook.API.Services
             if (price == null)
                 throw new Exception("ไม่พบราคาสำหรับชั้นโดยสารและวันที่ที่เลือก");
 
+            // เช็กว่าที่นั่งที่เลือกยังว่างอยู่จริง (ล็อกที่นั่ง กันจองซ้ำ)
+            var selectedSeats = bookingDTO.Passengers
+                .Where(p => !string.IsNullOrEmpty(p.SeatCode)).Select(p => p.SeatCode!).ToList();
+            if (selectedSeats.Any())
+            {
+                var next = bookingDTO.TravelDate.Date.AddDays(1);
+                var taken = await _context.Passengers
+                    .Where(p => p.SeatCode != null
+                        && p.Booking.ScheduleId == bookingDTO.ScheduleId
+                        && p.Booking.ClassId == bookingDTO.ClassId
+                        && p.Booking.TravelDate >= bookingDTO.TravelDate.Date && p.Booking.TravelDate < next
+                        && p.Booking.BookingStatus != "CANCELLED")
+                    .Select(p => p.SeatCode!).ToListAsync();
+                var clash = selectedSeats.Where(s => taken.Contains(s)).ToList();
+                if (clash.Any())
+                    throw new Exception("ที่นั่ง " + string.Join(", ", clash) + " ถูกจองไปแล้ว");
+            }
+
             decimal totalAmount = price.PriceAmount * bookingDTO.Passengers.Count;
 
             var booking = new Booking
@@ -61,7 +79,8 @@ namespace TrainBook.API.Services
                     LastName = passengerDTO.LastName,
                     IdCardNumber = passengerDTO.IdCardNumber,
                     PhoneNumber = passengerDTO.PhoneNumber,
-                    Email = passengerDTO.Email
+                    Email = passengerDTO.Email,
+                    SeatCode = passengerDTO.SeatCode
                 });
             }
 
@@ -135,7 +154,7 @@ namespace TrainBook.API.Services
 
             var fileName = $"{booking.BookingReference}.html";
             var passengerRows = string.Join("", booking.Passengers.Select(p =>
-                $"<div class='passenger'><strong>{p.Title} {p.FirstName} {p.LastName}</strong></div>"));
+                $"<div class='passenger'><strong>{p.Title} {p.FirstName} {p.LastName}</strong>{(string.IsNullOrEmpty(p.SeatCode) ? "" : " — ที่นั่ง " + p.SeatCode)}</div>"));
 
             var htmlContent = $@"<!DOCTYPE html>
 <html lang='th'>

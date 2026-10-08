@@ -8,5 +8,6 @@ namespace TrainBook.API.Services
         Task<List<Station>> GetAllStationsAsync();
         Task<List<TrainResultDTO>> SearchTrainsAsync(TrainSearchDTO searchDTO);
         Task<TicketClass?> GetClassByIdAsync(int classId);
+        Task<List<string>> GetTakenSeatsAsync(int scheduleId, int classId, DateTime date);
     }
 }

@@ -8,6 +8,7 @@ namespace TrainBook.API.DTOs
         public string? IdCardNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+        public string? SeatCode { get; set; }
     }
 
     public class CreateBookingDTO

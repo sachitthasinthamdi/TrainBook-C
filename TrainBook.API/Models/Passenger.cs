@@ -13,5 +13,6 @@ namespace TrainBook.API.Models
         public string? IdCardNumber { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
+        public string? SeatCode { get; set; }   // รหัสที่นั่ง เช่น 2A, 5C
     }
 }

@@ -28,5 +28,13 @@ namespace TrainBook.API.Controllers
             var results = await _trainService.SearchTrainsAsync(searchDTO);
             return Ok(results);
         }
+
+        // ที่นั่งที่ถูกจองแล้ว (สำหรับหน้าเลือกที่นั่ง)
+        [HttpGet("schedules/{scheduleId}/classes/{classId}/taken-seats")]
+        public async Task<IActionResult> TakenSeats(int scheduleId, int classId, [FromQuery] DateTime date)
+        {
+            var seats = await _trainService.GetTakenSeatsAsync(scheduleId, classId, date);
+            return Ok(seats);
+        }
     }
 }

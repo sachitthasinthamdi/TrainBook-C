@@ -54,7 +54,7 @@ function refreshNav() {
 document.addEventListener('DOMContentLoaded', () => {
   refreshNav();
   const page = document.body.dataset.page;
-  ({ index: initIndex, search: initSearch, booking: initBooking, ticket: initTicket, history: initHistory,
+  ({ index: initIndex, search: initSearch, seats: initSeats, booking: initBooking, ticket: initTicket, history: initHistory,
      login: initLogin, register: initRegister })[page]?.();
 });
 
@@ -123,7 +123,8 @@ async function initSearch() {
           origin: t.originStation, dest: t.destinationStation, dep: hhmm(t.departureTime), arr: hhmm(t.arrivalTime),
           classId: c.classId, className: c.className, price: c.price
         });
-        location.href = 'booking.html';
+        localStorage.removeItem('tb_seats');
+        location.href = 'seats.html';
       };
       cl.appendChild(pill);
     });
@@ -131,20 +132,72 @@ async function initSearch() {
   });
 }
 
+/* seats — เลือกที่นั่ง + ล็อกที่นั่ง */
+let SEATS = [];
+async function initSeats() {
+  const s = load('tb_search'), sel = load('tb_selected');
+  if (!s || !sel) { location.href = 'index.html'; return; }
+  SEATS = load('tb_seats') || [];
+  document.getElementById('seatTrip').textContent =
+    `${sel.trainName} (ขบวน ${sel.trainNumber}) · ${sel.origin} → ${sel.dest} · ${sel.className} · เลือก ${s.passengers} ที่นั่ง`;
+
+  let taken = [];
+  try {
+    taken = await api(`/api/trains/schedules/${sel.scheduleId}/classes/${sel.classId}/taken-seats?date=${encodeURIComponent(s.travelDate)}`);
+  } catch (e) { /* ว่างถ้าเรียกไม่ได้ */ }
+
+  const cols = ['A', 'C', 'gap', 'D', 'F'];
+  const map = document.getElementById('seatMap');
+  const render = () => {
+    map.innerHTML = '';
+    for (let row = 1; row <= 10; row++) cols.forEach(col => {
+      const d = document.createElement('div');
+      if (col === 'gap') { d.className = 'seat gap'; map.appendChild(d); return; }
+      const code = row + col, isTaken = taken.includes(code), isSel = SEATS.includes(code);
+      d.className = 'seat' + (isTaken ? ' taken' : '') + (isSel ? ' sel' : '');
+      d.textContent = code;
+      if (!isTaken) d.onclick = () => toggleSeat(code, s.passengers);
+      map.appendChild(d);
+    });
+    updateSeatSide(sel, s.passengers);
+  };
+  window.toggleSeat = (code, max) => {
+    const i = SEATS.indexOf(code);
+    if (i > -1) SEATS.splice(i, 1);
+    else { if (SEATS.length >= max) { toast(`เลือกได้สูงสุด ${max} ที่นั่ง`); return; } SEATS.push(code); }
+    render();
+  };
+  function updateSeatSide(sel, max) {
+    const box = document.getElementById('chosenSeats');
+    box.innerHTML = SEATS.length ? SEATS.map(s => `<span class="seat-chip">${sel.className.split(' ')[0]} · ${s}</span>`).join('') : 'ยังไม่ได้เลือกที่นั่ง';
+    document.getElementById('seatTotal').textContent = (SEATS.length * sel.price).toLocaleString() + ' บาท';
+  }
+  render();
+
+  document.getElementById('seatNext').onclick = () => {
+    if (SEATS.length === 0) { toast('กรุณาเลือกที่นั่งอย่างน้อย 1 ที่นั่ง'); return; }
+    if (SEATS.length < s.passengers) { toast(`กรุณาเลือกให้ครบ ${s.passengers} ที่นั่ง`); return; }
+    store('tb_seats', SEATS);
+    location.href = 'booking.html';
+  };
+}
+
 /* booking — ข้อมูลผู้โดยสาร + ชำระเงิน */
 function initBooking() {
   if (!getUser()) { toast('กรุณาเข้าสู่ระบบก่อนจอง'); setTimeout(() => location.href = 'login.html', 800); return; }
-  const s = load('tb_search'), sel = load('tb_selected');
+  const s = load('tb_search'), sel = load('tb_selected'), seats = load('tb_seats') || [];
   if (!s || !sel) { location.href = 'index.html'; return; }
+  if (!seats.length) { location.href = 'seats.html'; return; }
 
   document.getElementById('tripInfo').innerHTML =
-    `<b>${sel.trainName} (ขบวน ${sel.trainNumber})</b> · ${sel.origin} → ${sel.dest}<br>${s.travelDate} · ${sel.dep}-${sel.arr} · ${sel.className}`;
+    `<b>${sel.trainName} (ขบวน ${sel.trainNumber})</b> · ${sel.origin} → ${sel.dest}<br>${s.travelDate} · ${sel.dep}-${sel.arr} · ${sel.className} · ที่นั่ง ${seats.join(', ')}`;
 
   const pf = document.getElementById('passengerForms');
-  for (let i = 0; i < s.passengers; i++) {
+  seats.forEach((seat, i) => {
     const b = document.createElement('div');
     b.className = 'passenger-block';
-    b.innerHTML = `<h4 style="margin-bottom:10px;color:var(--primary);">ผู้โดยสารคนที่ ${i + 1}</h4>
+    b.dataset.seat = seat;
+    b.innerHTML = `<h4 style="margin-bottom:10px;color:var(--primary);">ผู้โดยสารคนที่ ${i + 1} · ที่นั่ง ${seat}</h4>
       <div class="form-row-2">
         <div class="form-group"><label>คำนำหน้า</label><select class="p-title"><option>นาย</option><option>นาง</option><option>นางสาว</option></select></div>
         <div class="form-group"><label>ชื่อ</label><input class="p-first" placeholder="ชื่อจริง"></div>
@@ -154,21 +207,22 @@ function initBooking() {
         <div class="form-group"><label>เลขบัตรประชาชน</label><input class="p-id" placeholder="เลขบัตร"></div>
       </div>`;
     pf.appendChild(b);
-  }
+  });
 
   document.querySelectorAll('.pay-option').forEach(o => o.onclick = () => {
     document.querySelectorAll('.pay-option').forEach(x => x.classList.remove('sel'));
     o.classList.add('sel');
   });
 
-  document.getElementById('total').textContent = baht(sel.price * s.passengers);
+  document.getElementById('total').textContent = baht(sel.price * seats.length);
 
   document.getElementById('confirmBtn').onclick = async () => {
     const passengers = [...document.querySelectorAll('.passenger-block')].map(b => ({
       title: b.querySelector('.p-title').value,
       firstName: b.querySelector('.p-first').value.trim(),
       lastName: b.querySelector('.p-last').value.trim(),
-      idCardNumber: b.querySelector('.p-id').value.trim()
+      idCardNumber: b.querySelector('.p-id').value.trim(),
+      seatCode: b.dataset.seat
     }));
     if (passengers.some(p => !p.firstName || !p.lastName)) { toast('กรอกชื่อ-นามสกุลผู้โดยสารให้ครบ'); return; }
     const pay = document.querySelector('.pay-option.sel')?.dataset.method || 'card';
@@ -178,6 +232,7 @@ function initBooking() {
         scheduleId: sel.scheduleId, classId: sel.classId, travelDate: s.travelDate, paymentMethod: pay, passengers } });
     } catch (e) { toast(e.message); return; }
     store('tb_ref', res.bookingReference);
+    localStorage.removeItem('tb_seats');
     location.href = 'ticket.html';
   };
 }
@@ -202,6 +257,7 @@ async function initTicket() {
       <div class="tk-row"><span>วันเดินทาง</span><b>${(b.travelDate||'').slice(0,10)}</b></div>
       <div class="tk-row"><span>เวลา</span><b>${hhmm(b.schedule.departureTime)} - ${hhmm(b.schedule.arrivalTime)}</b></div>
       <div class="tk-row"><span>ชั้นโดยสาร</span><b>${b.class.className}</b></div>
+      <div class="tk-row"><span>ที่นั่ง</span><b>${(b.passengers||[]).map(p=>p.seatCode).filter(Boolean).join(', ')||'-'}</b></div>
       <div class="tk-row"><span>ผู้โดยสาร</span><b>${b.numberOfPassengers} คน</b></div>
       <div class="tk-row"><span>ราคารวม</span><b>฿${Number(b.totalAmount).toLocaleString()}</b></div>
       <div class="tk-qr"><img src="/qrcodes/${b.bookingReference}.svg" alt="QR"></div>
@@ -230,7 +286,7 @@ async function initHistory() {
       <div>
         <div style="font-size:12px;color:var(--ink-soft);">${b.bookingReference}</div>
         <div style="font-weight:600;font-size:15px;margin:2px 0;">${b.schedule.originStation.stationName} → ${b.schedule.destinationStation.stationName}</div>
-        <div style="font-size:12.5px;color:var(--ink-soft);">${(b.travelDate||'').slice(0,10)} · ${hhmm(b.schedule.departureTime)}-${hhmm(b.schedule.arrivalTime)} · ${b.class.className}</div>
+        <div style="font-size:12.5px;color:var(--ink-soft);">${(b.travelDate||'').slice(0,10)} · ${hhmm(b.schedule.departureTime)}-${hhmm(b.schedule.arrivalTime)} · ${b.class.className} · ที่นั่ง ${(b.passengers||[]).map(p=>p.seatCode).filter(Boolean).join(', ')||'-'}</div>
       </div>
       <div style="display:flex;align-items:center;gap:12px;">
         <b style="color:var(--primary);">฿${Number(b.totalAmount).toLocaleString()}</b>${badge}

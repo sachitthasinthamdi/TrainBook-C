@@ -77,5 +77,19 @@ namespace TrainBook.API.Services
         {
             return await _context.TicketClasses.FindAsync(classId);
         }
+
+        // ที่นั่งที่ถูกจองแล้ว ของเที่ยวรถ+ชั้น+วันเดินทางที่ระบุ (สำหรับล็อกที่นั่ง)
+        public async Task<List<string>> GetTakenSeatsAsync(int scheduleId, int classId, DateTime date)
+        {
+            var next = date.Date.AddDays(1);
+            return await _context.Passengers
+                .Where(p => p.SeatCode != null
+                    && p.Booking.ScheduleId == scheduleId
+                    && p.Booking.ClassId == classId
+                    && p.Booking.TravelDate >= date.Date && p.Booking.TravelDate < next
+                    && p.Booking.BookingStatus != "CANCELLED")
+                .Select(p => p.SeatCode!)
+                .ToListAsync();
+        }
     }
 }
