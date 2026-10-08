@@ -13,7 +13,10 @@ async function api(path, { method = 'GET', body } = {}) {
   const t = getToken(); if (t) h['Authorization'] = 'Bearer ' + t;
   const res = await fetch(API + path, { method, headers: h, body: body ? JSON.stringify(body) : undefined });
   let data = null; try { data = await res.json(); } catch {}
-  if (!res.ok) throw new Error((data && data.message) || 'เกิดข้อผิดพลาด');
+  if (!res.ok) {
+    if (res.status === 401) throw new Error('กรุณาเข้าสู่ระบบก่อนทำรายการ (เซสชันหมดอายุ)');
+    throw new Error((data && data.message) || 'เกิดข้อผิดพลาด');
+  }
   return data;
 }
 
@@ -230,7 +233,11 @@ function initBooking() {
     try {
       res = await api('/api/bookings', { method: 'POST', body: {
         scheduleId: sel.scheduleId, classId: sel.classId, travelDate: s.travelDate, paymentMethod: pay, passengers } });
-    } catch (e) { toast(e.message); return; }
+    } catch (e) {
+      toast(e.message);
+      if (e.message.includes('เข้าสู่ระบบ')) setTimeout(() => location.href = 'login.html', 1200);
+      return;
+    }
     store('tb_ref', res.bookingReference);
     localStorage.removeItem('tb_seats');
     location.href = 'ticket.html';
